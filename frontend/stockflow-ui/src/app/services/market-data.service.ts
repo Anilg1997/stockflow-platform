@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Stock, PriceHistory, MarketOverview, StockQuote } from '../models/stock.model';
 
 @Injectable({ providedIn: 'root' })
 export class MarketDataService {
-  private readonly API_URL = '/api/market';
 
   // Mock data for development - real API integration would replace this
   private mockStocks: Stock[] = [
@@ -23,27 +21,21 @@ export class MarketDataService {
     { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd', sector: 'Automobile', currentPrice: 11250.00, previousClose: 11180.00, open: 11200.00, high: 11300.00, low: 11180.00, change: 70.00, changePercent: 0.63, volume: 1200000, marketCap: 340000000000, pe: 28.9, dividend: 0.25 },
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
   getMarketOverview(): Observable<MarketOverview> {
-    return this.http.get<MarketOverview>(`${this.API_URL}/overview`).pipe(
-      map(() => this.getMockMarketOverview())
-    );
+    return of(this.getMockMarketOverview());
   }
 
   getStockPrice(symbol: string): Observable<StockQuote> {
-    return this.http.get<StockQuote>(`${this.API_URL}/stock/${symbol}/quote`).pipe(
-      map(() => {
-        const stock = this.mockStocks.find(s => s.symbol === symbol);
-        return {
-          symbol: symbol,
-          price: stock?.currentPrice || 0,
-          change: stock?.change || 0,
-          changePercent: stock?.changePercent || 0,
-          timestamp: new Date().toISOString()
-        };
-      })
-    );
+    const stock = this.mockStocks.find(s => s.symbol === symbol);
+    return of({
+      symbol: symbol,
+      price: stock?.currentPrice || 0,
+      change: stock?.change || 0,
+      changePercent: stock?.changePercent || 0,
+      timestamp: new Date().toISOString()
+    });
   }
 
   getStockDetail(symbol: string): Stock | undefined {
