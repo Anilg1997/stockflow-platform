@@ -1,0 +1,811 @@
+version: '3.9'
+
+# ═══════════════════════════════════════════════════════════════
+# StockFlow Platform — Docker Compose (Full Local Stack)
+# ═══════════════════════════════════════════════════════════════
+
+services:
+
+  # ── INFRASTRUCTURE ────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: stockflow-postgres
+    ports: ["5432:5432"]
+    environment:
+      POSTGRES_DB: stockflow
+      POSTGRES_USER: stockflow
+      POSTGRES_PASSWORD: StockFlow@2024
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init-schemas.sql:/docker-entrypoint-initdb.d/01-init-schemas.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stockflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7
+    container_name: stockflow-mongodb
+    ports: ["27017:27017"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: stockflow
+      MONGO_INITDB_ROOT_PASSWORD: Mongo@2024
+      MONGO_INITDB_DATABASE: stockflow
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: stockflow-redis
+    ports: ["6379:6379"]
+    command: redis-server --requirepass Redis@2024
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "Redis@2024", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: stockflow-zookeeper
+    ports: ["2181:2181"]
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: stockflow-kafka
+    ports: ["9092:9092", "29092:29092"]
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 6
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: stockflow-zipkin
+    ports: ["9411:9411"]
+    environment:
+      STORAGE_TYPE: mem
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9411/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: stockflow-prometheus
+    ports: ["9090:9090"]
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: stockflow-grafana
+    ports: ["3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      prometheus:
+        condition: service_healthy
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: stockflow-kafka-ui
+    ports: ["8090:8080"]
+    environment:
+      KAFKA_CLUSTERS_0_NAME: stockflow
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: stockflow-mongo-express
+    ports: ["8091:8081"]
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: stockflow
+      ME_CONFIG_MONGODB_ADMINPASSWORD: Mongo@2024
+      ME_CONFIG_MONGODB_URL: mongodb://stockflow:Mongo@2024@mongodb:27017/
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: stockflow-pgadmin
+    ports: ["5050:80"]
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@stockflow.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ── SPRING CLOUD INFRASTRUCTURE ───────────────────────────────
+
+  service-registry:
+    build:
+      context: ./services/service-registry
+      dockerfile: Dockerfile
+    container_name: stockflow-service-registry
+    ports: ["8761:8761"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  config-server:
+    build:
+      context: ./services/config-server
+      dockerfile: Dockerfile
+    container_name: stockflow-config-server
+    ports: ["8888:8888"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: stockflow-api-gateway
+    ports: ["8080:8080"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: Redis@2024
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  # ── AUTH & USER SERVICES ──────────────────────────────────────
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: stockflow-auth-service
+    ports: ["8081:8081"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: Redis@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: stockflow-user-service
+    ports: ["8082:8082"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  # ── MARKET DATA SERVICES ──────────────────────────────────────
+
+  market-data-service:
+    build:
+      context: ./services/market-data-service
+      dockerfile: Dockerfile
+    container_name: stockflow-market-data-service
+    ports: ["8083:8083"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  price-simulator-service:
+    build:
+      context: ./services/price-simulator-service
+      dockerfile: Dockerfile
+    container_name: stockflow-price-simulator-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  historical-data-service:
+    build:
+      context: ./services/historical-data-service
+      dockerfile: Dockerfile
+    container_name: stockflow-historical-data-service
+    ports: ["8085:8085"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
+  # ── TRADING SERVICES ──────────────────────────────────────────
+
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    container_name: stockflow-order-service
+    ports: ["8086:8086"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: Redis@2024
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  trade-execution-service:
+    build:
+      context: ./services/trade-execution-service
+      dockerfile: Dockerfile
+    container_name: stockflow-trade-execution-service
+    ports: ["8087:8087"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8087/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  brokerage-service:
+    build:
+      context: ./services/brokerage-service
+      dockerfile: Dockerfile
+    container_name: stockflow-brokerage-service
+    ports: ["8088:8088"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  holdings-service:
+    build:
+      context: ./services/holdings-service
+      dockerfile: Dockerfile
+    container_name: stockflow-holdings-service
+    ports: ["8089:8089"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  # ── MUTUAL FUND SERVICES ──────────────────────────────────────
+
+  mf-service:
+    build:
+      context: ./services/mf-service
+      dockerfile: Dockerfile
+    container_name: stockflow-mf-service
+    ports: ["8090:8090"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
+  sip-service:
+    build:
+      context: ./services/sip-service
+      dockerfile: Dockerfile
+    container_name: stockflow-sip-service
+    ports: ["8091:8091"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  mf-holdings-service:
+    build:
+      context: ./services/mf-holdings-service
+      dockerfile: Dockerfile
+    container_name: stockflow-mf-holdings-service
+    ports: ["8092:8092"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  # ── WATCHLIST SERVICE ─────────────────────────────────────────
+
+  watchlist-service:
+    build:
+      context: ./services/watchlist-service
+      dockerfile: Dockerfile
+    container_name: stockflow-watchlist-service
+    ports: ["8093:8093"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  # ── FUNDS SERVICE ─────────────────────────────────────────────
+
+  funds-service:
+    build:
+      context: ./services/funds-service
+      dockerfile: Dockerfile
+    container_name: stockflow-funds-service
+    ports: ["8094:8094"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: Redis@2024
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8094/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  # ── IPO SERVICE ───────────────────────────────────────────────
+
+  ipo-service:
+    build:
+      context: ./services/ipo-service
+      dockerfile: Dockerfile
+    container_name: stockflow-ipo-service
+    ports: ["8095:8095"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  # ── NOTIFICATION & ALERT SERVICES ─────────────────────────────
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: stockflow-notification-service
+    ports: ["8096:8096"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  alert-service:
+    build:
+      context: ./services/alert-service
+      dockerfile: Dockerfile
+    container_name: stockflow-alert-service
+    ports: ["8097:8097"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: Redis@2024
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  # ── REPORTING SERVICE ─────────────────────────────────────────
+
+  report-service:
+    build:
+      context: ./services/report-service
+      dockerfile: Dockerfile
+    container_name: stockflow-report-service
+    ports: ["8098:8098"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  # ── ANALYTICS SERVICE ─────────────────────────────────────────
+
+  analytics-service:
+    build:
+      context: ./services/analytics-service
+      dockerfile: Dockerfile
+    container_name: stockflow-analytics-service
+    ports: ["8099:8099"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: StockFlow_JWT_Min32Char_Secret_2024!!
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
+  # ── NEWS SERVICE ──────────────────────────────────────────────
+
+  news-service:
+    build:
+      context: ./services/news-service
+      dockerfile: Dockerfile
+    container_name: stockflow-news-service
+    ports: ["8100:8100"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
+  # ── AUDIT SERVICE ─────────────────────────────────────────────
+
+  audit-service:
+    build:
+      context: ./services/audit-service
+      dockerfile: Dockerfile
+    container_name: stockflow-audit-service
+    ports: ["8101:8101"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  # ── SEARCH SERVICE ────────────────────────────────────────────
+
+  search-service:
+    build:
+      context: ./services/search-service
+      dockerfile: Dockerfile
+    container_name: stockflow-search-service
+    ports: ["8102:8102"]
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stockflow
+      SPRING_DATASOURCE_USERNAME: stockflow
+      SPRING_DATASOURCE_PASSWORD: StockFlow@2024
+      SPRING_DATA_MONGODB_URI: mongodb://stockflow:Mongo@2024@mongodb:27017/stockflow?authSource=admin
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
+  # ── ANGULAR FRONTEND ──────────────────────────────────────────
+
+  frontend:
+    build:
+      context: ./frontend/stockflow-ui
+      dockerfile: Dockerfile
+    container_name: stockflow-frontend
+    ports: ["4200:80"]
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  mongo-data:
+  redis-data:

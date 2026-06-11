@@ -1,0 +1,102 @@
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter:
+              replenishRate: 100
+              burstCapacity: 200
+              requestedTokens: 1
+            key-resolver: "#{@userKeyResolver}"
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT
+            methods: GET
+            backoff:
+              firstBackoff: 100ms
+              maxBackoff: 1s
+              factor: 2
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+      routes: []
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: Auth Service
+        url: /auth/v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${MANAGEMENT_ZIPKIN_TRACING_ENDPOINT:http://localhost:9411/api/v2/spans}
+
+logging:
+  level:
+    com.stockflow.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+
+jwt:
+  secret: ${JWT_SECRET:StockFlow_JWT_Min32Char_Secret_2024!!}
+  expiration: ${JWT_EXPIRATION:900}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800}
+
+app:
+  services:
+    auth-service: lb://auth-service
+    user-service: lb://user-service
+    market-data-service: lb://market-data-service
+    order-service: lb://order-service
+    holdings-service: lb://holdings-service
+    funds-service: lb://funds-service
+    watchlist-service: lb://watchlist-service
+    mf-service: lb://mf-service
+    ipo-service: lb://ipo-service
+    news-service: lb://news-service
+    analytics-service: lb://analytics-service
+    report-service: lb://report-service
+    alert-service: lb://alert-service
+    search-service: lb://search-service

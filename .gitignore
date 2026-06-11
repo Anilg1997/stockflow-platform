@@ -1,0 +1,59 @@
+# Compiled class files
+*.class
+target/
+build/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Node.js (Angular frontend)
+node_modules/
+.angular/
+dist/
+.pnp.*
+.yarn/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Docker
+postgres-data/
+mongo-data/
+redis-data/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Test output
+surefire-reports/
+failsafe-reports/
+
+# Kubernetes
+*.kube
+
+# Coverage
+coverage/
+htmlcov/
+jacoco.exec

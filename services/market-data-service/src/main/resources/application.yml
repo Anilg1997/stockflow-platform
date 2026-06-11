@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: market-data-service
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:stockflow}
+    username: ${POSTGRES_USER:stockflow}
+    password: ${POSTGRES_PASSWORD:StockFlow@2024}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: market_schema
+    show-sql: false
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://stockflow:Mongo@2024@localhost:27017/stockflow?authSource=admin}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+server:
+  port: 8083
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  tracing:
+    sampling: { probability: 1.0 }
+  zipkin:
+    tracing:
+      endpoint: ${MANAGEMENT_ZIPKIN_TRACING_ENDPOINT:http://localhost:9411/api/v2/spans}
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+logging:
+  level:
+    com.stockflow: DEBUG
