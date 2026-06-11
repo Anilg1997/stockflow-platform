@@ -794,16 +794,17 @@ services:
         condition: service_healthy
 
   # ── ANGULAR FRONTEND ──────────────────────────────────────────
-
-  frontend:
-    build:
-      context: ./frontend/stockflow-ui
-      dockerfile: Dockerfile
-    container_name: stockflow-frontend
-    ports: ["4200:80"]
-    depends_on:
-      api-gateway:
-        condition: service_healthy
+  # (Disabled — frontend/stockflow-ui directory not present yet)
+  # Uncomment when the Angular UI is added:
+  # frontend:
+  #   build:
+  #     context: ./frontend/stockflow-ui
+  #     dockerfile: Dockerfile
+  #   container_name: stockflow-frontend
+  #   ports: ["4200:80"]
+  #   depends_on:
+  #     api-gateway:
+  #       condition: service_healthy
 
 volumes:
   postgres-data:
