@@ -166,7 +166,7 @@ services:
 
   service-registry:
     build:
-      context: ./services/service-registry
+      context: ./backend/service-registry
       dockerfile: Dockerfile
     container_name: stockflow-service-registry
     ports: ["8761:8761"]
@@ -179,7 +179,7 @@ services:
 
   config-server:
     build:
-      context: ./services/config-server
+      context: ./backend/config-server
       dockerfile: Dockerfile
     container_name: stockflow-config-server
     ports: ["8888:8888"]
@@ -197,7 +197,7 @@ services:
 
   api-gateway:
     build:
-      context: ./services/api-gateway
+      context: ./backend/api-gateway
       dockerfile: Dockerfile
     container_name: stockflow-api-gateway
     ports: ["8080:8080"]
@@ -224,7 +224,7 @@ services:
 
   auth-service:
     build:
-      context: ./services/auth-service
+      context: ./backend/auth-service
       dockerfile: Dockerfile
     container_name: stockflow-auth-service
     ports: ["8081:8081"]
@@ -256,7 +256,7 @@ services:
 
   user-service:
     build:
-      context: ./services/user-service
+      context: ./backend/user-service
       dockerfile: Dockerfile
     container_name: stockflow-user-service
     ports: ["8082:8082"]
@@ -288,7 +288,7 @@ services:
 
   market-data-service:
     build:
-      context: ./services/market-data-service
+      context: ./backend/market-data-service
       dockerfile: Dockerfile
     container_name: stockflow-market-data-service
     ports: ["8083:8083"]
@@ -319,7 +319,7 @@ services:
 
   price-simulator-service:
     build:
-      context: ./services/price-simulator-service
+      context: ./backend/price-simulator-service
       dockerfile: Dockerfile
     container_name: stockflow-price-simulator-service
     environment:
@@ -338,7 +338,7 @@ services:
 
   historical-data-service:
     build:
-      context: ./services/historical-data-service
+      context: ./backend/historical-data-service
       dockerfile: Dockerfile
     container_name: stockflow-historical-data-service
     ports: ["8085:8085"]
@@ -358,7 +358,7 @@ services:
 
   order-service:
     build:
-      context: ./services/order-service
+      context: ./backend/order-service
       dockerfile: Dockerfile
     container_name: stockflow-order-service
     ports: ["8086:8086"]
@@ -390,7 +390,7 @@ services:
 
   trade-execution-service:
     build:
-      context: ./services/trade-execution-service
+      context: ./backend/trade-execution-service
       dockerfile: Dockerfile
     container_name: stockflow-trade-execution-service
     ports: ["8087:8087"]
@@ -419,7 +419,7 @@ services:
 
   brokerage-service:
     build:
-      context: ./services/brokerage-service
+      context: ./backend/brokerage-service
       dockerfile: Dockerfile
     container_name: stockflow-brokerage-service
     ports: ["8088:8088"]
@@ -441,7 +441,7 @@ services:
 
   holdings-service:
     build:
-      context: ./services/holdings-service
+      context: ./backend/holdings-service
       dockerfile: Dockerfile
     container_name: stockflow-holdings-service
     ports: ["8089:8089"]
@@ -475,7 +475,7 @@ services:
 
   mf-service:
     build:
-      context: ./services/mf-service
+      context: ./backend/mf-service
       dockerfile: Dockerfile
     container_name: stockflow-mf-service
     ports: ["8090:8090"]
@@ -498,7 +498,7 @@ services:
 
   sip-service:
     build:
-      context: ./services/sip-service
+      context: ./backend/sip-service
       dockerfile: Dockerfile
     container_name: stockflow-sip-service
     ports: ["8091:8091"]
@@ -520,7 +520,7 @@ services:
 
   mf-holdings-service:
     build:
-      context: ./services/mf-holdings-service
+      context: ./backend/mf-holdings-service
       dockerfile: Dockerfile
     container_name: stockflow-mf-holdings-service
     ports: ["8092:8092"]
@@ -545,7 +545,7 @@ services:
 
   watchlist-service:
     build:
-      context: ./services/watchlist-service
+      context: ./backend/watchlist-service
       dockerfile: Dockerfile
     container_name: stockflow-watchlist-service
     ports: ["8093:8093"]
@@ -568,7 +568,7 @@ services:
 
   funds-service:
     build:
-      context: ./services/funds-service
+      context: ./backend/funds-service
       dockerfile: Dockerfile
     container_name: stockflow-funds-service
     ports: ["8094:8094"]
@@ -604,7 +604,7 @@ services:
 
   ipo-service:
     build:
-      context: ./services/ipo-service
+      context: ./backend/ipo-service
       dockerfile: Dockerfile
     container_name: stockflow-ipo-service
     ports: ["8095:8095"]
@@ -629,7 +629,7 @@ services:
 
   notification-service:
     build:
-      context: ./services/notification-service
+      context: ./backend/notification-service
       dockerfile: Dockerfile
     container_name: stockflow-notification-service
     ports: ["8096:8096"]
@@ -649,7 +649,7 @@ services:
 
   alert-service:
     build:
-      context: ./services/alert-service
+      context: ./backend/alert-service
       dockerfile: Dockerfile
     container_name: stockflow-alert-service
     ports: ["8097:8097"]
@@ -677,7 +677,7 @@ services:
 
   report-service:
     build:
-      context: ./services/report-service
+      context: ./backend/report-service
       dockerfile: Dockerfile
     container_name: stockflow-report-service
     ports: ["8098:8098"]
@@ -704,7 +704,7 @@ services:
 
   analytics-service:
     build:
-      context: ./services/analytics-service
+      context: ./backend/analytics-service
       dockerfile: Dockerfile
     container_name: stockflow-analytics-service
     ports: ["8099:8099"]
@@ -730,7 +730,7 @@ services:
 
   news-service:
     build:
-      context: ./services/news-service
+      context: ./backend/news-service
       dockerfile: Dockerfile
     container_name: stockflow-news-service
     ports: ["8100:8100"]
@@ -750,7 +750,7 @@ services:
 
   audit-service:
     build:
-      context: ./services/audit-service
+      context: ./backend/audit-service
       dockerfile: Dockerfile
     container_name: stockflow-audit-service
     ports: ["8101:8101"]
@@ -772,7 +772,7 @@ services:
 
   search-service:
     build:
-      context: ./services/search-service
+      context: ./backend/search-service
       dockerfile: Dockerfile
     container_name: stockflow-search-service
     ports: ["8102:8102"]
@@ -794,17 +794,16 @@ services:
         condition: service_healthy
 
   # ── ANGULAR FRONTEND ──────────────────────────────────────────
-  # (Disabled — frontend/stockflow-ui directory not present yet)
-  # Uncomment when the Angular UI is added:
-  # frontend:
-  #   build:
-  #     context: ./frontend/stockflow-ui
-  #     dockerfile: Dockerfile
-  #   container_name: stockflow-frontend
-  #   ports: ["4200:80"]
-  #   depends_on:
-  #     api-gateway:
-  #       condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend/stockflow-ui
+      dockerfile: Dockerfile
+    container_name: stockflow-frontend
+    ports: ["4200:80"]
+    depends_on:
+      api-gateway:
+        condition: service_healthy
 
 volumes:
   postgres-data:

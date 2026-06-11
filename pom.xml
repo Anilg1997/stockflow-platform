@@ -20,32 +20,32 @@
     <description>StockFlow — Groww-like Stock Brokerage Platform · Java 21 · Spring Boot · GraphQL · Kafka · Saga · Real-Time</description>
 
     <modules>
-        <module>services/common</module>
-        <module>services/service-registry</module>
-        <module>services/config-server</module>
-        <module>services/api-gateway</module>
-        <module>services/auth-service</module>
-        <module>services/user-service</module>
-        <module>services/market-data-service</module>
-        <module>services/price-simulator-service</module>
-        <module>services/historical-data-service</module>
-        <module>services/order-service</module>
-        <module>services/trade-execution-service</module>
-        <module>services/brokerage-service</module>
-        <module>services/holdings-service</module>
-        <module>services/mf-service</module>
-        <module>services/sip-service</module>
-        <module>services/mf-holdings-service</module>
-        <module>services/watchlist-service</module>
-        <module>services/funds-service</module>
-        <module>services/ipo-service</module>
-        <module>services/notification-service</module>
-        <module>services/alert-service</module>
-        <module>services/report-service</module>
-        <module>services/analytics-service</module>
-        <module>services/news-service</module>
-        <module>services/audit-service</module>
-        <module>services/search-service</module>
+        <module>backend/common</module>
+        <module>backend/service-registry</module>
+        <module>backend/config-server</module>
+        <module>backend/api-gateway</module>
+        <module>backend/auth-service</module>
+        <module>backend/user-service</module>
+        <module>backend/market-data-service</module>
+        <module>backend/price-simulator-service</module>
+        <module>backend/historical-data-service</module>
+        <module>backend/order-service</module>
+        <module>backend/trade-execution-service</module>
+        <module>backend/brokerage-service</module>
+        <module>backend/holdings-service</module>
+        <module>backend/mf-service</module>
+        <module>backend/sip-service</module>
+        <module>backend/mf-holdings-service</module>
+        <module>backend/watchlist-service</module>
+        <module>backend/funds-service</module>
+        <module>backend/ipo-service</module>
+        <module>backend/notification-service</module>
+        <module>backend/alert-service</module>
+        <module>backend/report-service</module>
+        <module>backend/analytics-service</module>
+        <module>backend/news-service</module>
+        <module>backend/audit-service</module>
+        <module>backend/search-service</module>
     </modules>
 
     <properties>

@@ -45,8 +45,9 @@ StockFlow is built with **25+ Spring Boot microservices** communicating via **Ap
 | **Build**              | Maven 3.9.16                                 |
 | **Containerization**   | Docker, Docker Compose                       |
 | **Monitoring**         | Prometheus, Grafana, Zipkin                  |
+| **Frontend**           | Angular 18, TypeScript, Tailwind CSS         |
 
-## Microservices 📦
+## Backend Services 📦
 
 ### Infrastructure Services
 | Service            | Port | Description                        |
@@ -94,6 +95,7 @@ StockFlow is built with **25+ Spring Boot microservices** communicating via **Ap
 ### Prerequisites
 - Java 21+
 - Docker & Docker Compose
+- Node.js 18+ & npm
 - Maven 3.9+
 - 16GB+ RAM recommended for full stack
 
@@ -111,16 +113,12 @@ cp .env.example .env
 docker-compose up -d postgres mongodb redis zookeeper kafka zipkin prometheus grafana
 ```
 
-3. **Build services**
+3. **Build backend**
 ```bash
-# Windows (use full path to mvn if not in PATH)
 mvn clean compile -DskipTests
-
-# Or with Maven wrapper alternative:
-cd services  # Build each service individually
 ```
 
-4. **Start services (in order)**
+4. **Start backend services (in order)**
 ```bash
 # Start infrastructure services first
 docker-compose up -d service-registry config-server api-gateway
@@ -135,7 +133,15 @@ docker-compose up -d order-service trade-execution-service holdings-service
 docker-compose up -d notification-service alert-service funds-service
 ```
 
-5. **Access the platform**
+5. **Run frontend**
+```bash
+cd frontend/stockflow-ui
+npm install
+npm start
+```
+
+6. **Access the platform**
+- **Web UI**: http://localhost:4200
 - API Gateway: http://localhost:8080
 - Eureka Dashboard: http://localhost:8761
 - Swagger UI: http://localhost:8080/swagger-ui.html
@@ -212,12 +218,14 @@ stockflow-platform/
 │   ├── grafana/            # Grafana dashboards
 │   ├── postgres/           # SQL initialization scripts
 │   └── prometheus/         # Prometheus scrape config
-├── services/               # Microservices
+├── backend/                # Spring Boot microservices
 │   ├── common/             # Shared DTOs, events, utilities
 │   ├── api-gateway/        # Spring Cloud Gateway
 │   ├── auth-service/       # Authentication & authorization
 │   ├── order-service/      # Order management
 │   └── ...                 # 22 more services
+├── frontend/               # Angular web application
+│   └── stockflow-ui/       # StockFlow Trading UI (Angular 18)
 ├── docker-compose.yml      # Full stack Docker Compose
 ├── pom.xml                 # Root Maven POM
 └── .env.example            # Environment template
