@@ -73,19 +73,19 @@ import { IPO } from '../../models/ipo.model';
               <div class="grid grid-cols-4 gap-4 text-center">
                 <div>
                   <p class="text-xs text-gray-500">Retail</p>
-                  <p class="font-semibold stock-positive">{{ipo.subscription.retail.toFixed(2)}x</p>
+                  <p class="font-semibold stock-positive">{{ipo.subscription.retail.toFixed(2)}}x</p>
                 </div>
                 <div>
                   <p class="text-xs text-gray-500">QIB</p>
-                  <p class="font-semibold stock-positive">{{ipo.subscription.qib.toFixed(2)}x</p>
+                  <p class="font-semibold stock-positive">{{ipo.subscription.qib.toFixed(2)}}x</p>
                 </div>
                 <div>
                   <p class="text-xs text-gray-500">NII</p>
-                  <p class="font-semibold stock-positive">{{ipo.subscription.nii.toFixed(2)}x</p>
+                  <p class="font-semibold stock-positive">{{ipo.subscription.nii.toFixed(2)}}x</p>
                 </div>
                 <div>
                   <p class="text-xs text-gray-500">Total</p>
-                  <p class="font-semibold stock-positive">{{ipo.subscription.total.toFixed(2)}x</p>
+                  <p class="font-semibold stock-positive">{{ipo.subscription.total.toFixed(2)}}x</p>
                 </div>
               </div>
             </div>
