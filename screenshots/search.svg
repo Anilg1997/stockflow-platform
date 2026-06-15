@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" font-family="'Inter', 'Segoe UI', sans-serif">
+  <rect width="1200" height="750" fill="#F9FAFB"/>
+  <rect width="1200" height="64" fill="white"/>
+  <rect x="0" y="64" width="1200" height="1" fill="#E5E7EB"/>
+  <rect x="16" y="16" width="32" height="32" rx="8" fill="#4F46E5"/>
+  <text x="24" y="38" font-size="14" fill="white" font-weight="700" text-anchor="middle">SF</text>
+  <text x="60" y="39" font-size="20" fill="#111827" font-weight="700">StockFlow</text>
+  <rect x="0" y="64" width="256" height="686" fill="white"/>
+  <rect x="255" y="64" width="1" height="686" fill="#E5E7EB"/>
+  <rect x="16" y="80" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="106" font-size="13" fill="#6B7280">🏠 Dashboard</text>
+  <rect x="16" y="126" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="152" font-size="13" fill="#6B7280">📈 Trading</text>
+  <rect x="16" y="172" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="198" font-size="13" fill="#6B7280">💼 Portfolio</text>
+  <rect x="16" y="218" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="244" font-size="13" fill="#6B7280">⭐ Watchlist</text>
+  <rect x="16" y="700" width="224" height="40" rx="8" fill="#F9FAFB"/>
+  <text x="28" y="718" font-size="11" fill="#6B7280">Available Balance</text>
+  <text x="28" y="734" font-size="14" fill="#111827" font-weight="700">₹1,80,000</text>
+  <!-- Main -->
+  <text x="280" y="100" font-size="22" fill="#111827" font-weight="700">Search Results</text>
+  <text x="280" y="126" font-size="13" fill="#6B7280">Showing results for "RELIANCE"</text>
+  <!-- Results Table -->
+  <rect x="280" y="145" width="910" height="400" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <rect x="280" y="190" width="910" height="36" fill="#F9FAFB"/>
+  <text x="296" y="213" font-size="11" fill="#6B7280" font-weight="600">Symbol</text>
+  <text x="440" y="213" font-size="11" fill="#6B7280" font-weight="600">Company Name</text>
+  <text x="660" y="213" font-size="11" fill="#6B7280" font-weight="600">Sector</text>
+  <text x="780" y="213" font-size="11" fill="#6B7280" font-weight="600" text-anchor="end">LTP</text>
+  <text x="900" y="213" font-size="11" fill="#6B7280" font-weight="600" text-anchor="end">% Change</text>
+  <text x="1030" y="213" font-size="11" fill="#6B7280" font-weight="600" text-anchor="end">Volume</text>
+  <!-- Row -->
+  <rect x="280" y="226" width="910" height="52" fill="transparent"/>
+  <text x="296" y="250" font-size="13" fill="#4F46E5" font-weight="600">RELIANCE</text>
+  <text x="440" y="258" font-size="12" fill="#111827">Reliance Industries</text>
+  <rect x="640" y="248" width="62" height="22" rx="6" fill="#F3F4F6"/>
+  <text x="648" y="264" font-size="10" fill="#6B7280" font-weight="500">Oil &amp; Gas</text>
+  <text x="780" y="258" font-size="12" fill="#111827" font-weight="600" text-anchor="end">₹2,845.50</text>
+  <text x="900" y="258" font-size="12" fill="#059669" text-anchor="end">+3.45%</text>
+  <text x="1030" y="258" font-size="12" fill="#6B7280" text-anchor="end">12.5L</text>
+  <line x1="296" y1="278" x2="1174" y2="278" stroke="#F3F4F6" stroke-width="1"/>
+  <!-- Row 2 -->
+  <rect x="280" y="278" width="910" height="52" fill="transparent"/>
+  <text x="296" y="302" font-size="13" fill="#4F46E5" font-weight="600">RELIANCEBANK</text>
+  <text x="440" y="310" font-size="12" fill="#111827">Reliance Bank</text>
+  <rect x="640" y="300" width="52" height="22" rx="6" fill="#F3F4F6"/>
+  <text x="648" y="316" font-size="10" fill="#6B7280" font-weight="500">Banking</text>
+  <text x="780" y="310" font-size="12" fill="#111827" font-weight="600" text-anchor="end">₹567.80</text>
+  <text x="900" y="310" font-size="12" fill="#059669" text-anchor="end">+0.89%</text>
+  <text x="1030" y="310" font-size="12" fill="#6B7280" text-anchor="end">2.1L</text>
+</svg>

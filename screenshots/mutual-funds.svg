@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" font-family="'Inter', 'Segoe UI', sans-serif">
+  <rect width="1200" height="750" fill="#F9FAFB"/>
+  <rect width="1200" height="64" fill="white"/>
+  <rect x="0" y="64" width="1200" height="1" fill="#E5E7EB"/>
+  <rect x="16" y="16" width="32" height="32" rx="8" fill="#4F46E5"/>
+  <text x="24" y="38" font-size="14" fill="white" font-weight="700" text-anchor="middle">SF</text>
+  <text x="60" y="39" font-size="20" fill="#111827" font-weight="700">StockFlow</text>
+  <rect x="0" y="64" width="256" height="686" fill="white"/>
+  <rect x="255" y="64" width="1" height="686" fill="#E5E7EB"/>
+  <rect x="16" y="80" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="106" font-size="13" fill="#6B7280">🏠 Dashboard</text>
+  <rect x="16" y="126" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="152" font-size="13" fill="#6B7280">📈 Trading</text>
+  <rect x="16" y="172" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="198" font-size="13" fill="#6B7280">💼 Portfolio</text>
+  <rect x="16" y="218" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="244" font-size="13" fill="#6B7280">⭐ Watchlist</text>
+  <text x="24" y="290" font-size="11" fill="#9CA3AF" font-weight="600" letter-spacing="1">INVESTMENTS</text>
+  <rect x="16" y="305" width="224" height="40" rx="8" fill="#EEF2FF"/>
+  <text x="44" y="331" font-size="13" fill="#4F46E5" font-weight="600">💰 Mutual Funds</text>
+  <rect x="16" y="351" width="224" height="40" rx="8" fill="transparent"/>
+  <text x="44" y="377" font-size="13" fill="#6B7280">🚀 IPOs</text>
+  <rect x="16" y="700" width="224" height="40" rx="8" fill="#F9FAFB"/>
+  <text x="28" y="718" font-size="11" fill="#6B7280">Available Balance</text>
+  <text x="28" y="734" font-size="14" fill="#111827" font-weight="700">₹1,80,000</text>
+  <!-- Main -->
+  <text x="280" y="100" font-size="22" fill="#111827" font-weight="700">Mutual Funds</text>
+  <text x="280" y="126" font-size="13" fill="#6B7280">Explore and invest in top mutual funds</text>
+  <!-- Filters -->
+  <rect x="280" y="145" width="910" height="56" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <rect x="296" y="160" width="180" height="30" rx="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="312" y="180" font-size="12" fill="#6B7280">All Categories</text>
+  <polygon points="458,178 462,172 466,178" fill="#6B7280"/>
+  <rect x="488" y="160" width="180" height="30" rx="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="504" y="180" font-size="12" fill="#6B7280">All Risk Levels</text>
+  <polygon points="650,178 654,172 658,178" fill="#6B7280"/>
+  <!-- Fund Cards - Row 1 -->
+  <rect x="280" y="215" width="295" height="240" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="296" y="242" font-size="14" fill="#111827" font-weight="600">Axis Bluechip Fund</text>
+  <rect x="296" y="252" width="66" height="20" rx="6" fill="#EEF2FF"/>
+  <text x="304" y="267" font-size="10" fill="#4F46E5" font-weight="500">Large Cap</text>
+  <rect x="370" y="252" width="38" height="20" rx="6" fill="#D1FAE5"/>
+  <text x="376" y="267" font-size="10" fill="#059669" font-weight="600">LOW</text>
+  <line x1="296" y1="282" x2="559" y2="282" stroke="#F3F4F6" stroke-width="1"/>
+  <text x="296" y="302" font-size="12" fill="#6B7280">NAV</text>
+  <text x="380" y="302" font-size="12" fill="#111827" font-weight="600">₹58.23</text>
+  <text x="296" y="322" font-size="12" fill="#6B7280">Day Change</text>
+  <text x="380" y="322" font-size="12" fill="#059669" font-weight="500">+0.78%</text>
+  <text x="296" y="342" font-size="12" fill="#6B7280">1Y Return</text>
+  <text x="380" y="342" font-size="12" fill="#059669" font-weight="500">+15.20%</text>
+  <text x="296" y="362" font-size="12" fill="#6B7280">Expense Ratio</text>
+  <text x="380" y="362" font-size="12" fill="#111827" font-weight="600">1.05%</text>
+  <text x="296" y="382" font-size="12" fill="#6B7280">Min Investment</text>
+  <text x="380" y="382" font-size="12" fill="#111827" font-weight="600">₹500</text>
+  <rect x="296" y="396" width="263" height="36" rx="8" fill="#4F46E5"/>
+  <text x="428" y="419" font-size="12" fill="white" font-weight="600" text-anchor="middle">Invest Now</text>
+  <!-- Card 2 -->
+  <rect x="588" y="215" width="295" height="240" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="604" y="242" font-size="14" fill="#111827" font-weight="600">SBI Magnum Midcap</text>
+  <rect x="604" y="252" width="52" height="20" rx="6" fill="#EEF2FF"/>
+  <text x="612" y="267" font-size="10" fill="#4F46E5" font-weight="500">Mid Cap</text>
+  <rect x="664" y="252" width="68" height="20" rx="6" fill="#FEF3C7"/>
+  <text x="672" y="267" font-size="10" fill="#D97706" font-weight="600">MODERATE</text>
+  <line x1="604" y1="282" x2="867" y2="282" stroke="#F3F4F6" stroke-width="1"/>
+  <text x="604" y="302" font-size="12" fill="#6B7280">NAV</text>
+  <text x="688" y="302" font-size="12" fill="#111827" font-weight="600">₹156.78</text>
+  <text x="604" y="322" font-size="12" fill="#6B7280">Day Change</text>
+  <text x="688" y="322" font-size="12" fill="#DC2626" font-weight="500">-0.50%</text>
+  <text x="604" y="342" font-size="12" fill="#6B7280">1Y Return</text>
+  <text x="688" y="342" font-size="12" fill="#059669" font-weight="500">+22.50%</text>
+  <text x="604" y="362" font-size="12" fill="#6B7280">Expense Ratio</text>
+  <text x="688" y="362" font-size="12" fill="#111827" font-weight="600">1.45%</text>
+  <text x="604" y="382" font-size="12" fill="#6B7280">Min Investment</text>
+  <text x="688" y="382" font-size="12" fill="#111827" font-weight="600">₹1,000</text>
+  <rect x="604" y="396" width="263" height="36" rx="8" fill="#4F46E5"/>
+  <text x="736" y="419" font-size="12" fill="white" font-weight="600" text-anchor="middle">Invest Now</text>
+  <!-- Card 3 -->
+  <rect x="896" y="215" width="295" height="240" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="912" y="242" font-size="14" fill="#111827" font-weight="600">HDFC Top 100</text>
+  <rect x="912" y="252" width="66" height="20" rx="6" fill="#EEF2FF"/>
+  <text x="920" y="267" font-size="10" fill="#4F46E5" font-weight="500">Large Cap</text>
+  <rect x="986" y="252" width="38" height="20" rx="6" fill="#D1FAE5"/>
+  <text x="992" y="267" font-size="10" fill="#059669" font-weight="600">LOW</text>
+  <line x1="912" y1="282" x2="1175" y2="282" stroke="#F3F4F6" stroke-width="1"/>
+  <text x="912" y="302" font-size="12" fill="#6B7280">NAV</text>
+  <text x="996" y="302" font-size="12" fill="#111827" font-weight="600">₹367.90</text>
+  <text x="912" y="322" font-size="12" fill="#6B7280">Day Change</text>
+  <text x="996" y="322" font-size="12" fill="#059669" font-weight="500">+0.34%</text>
+  <text x="912" y="342" font-size="12" fill="#6B7280">1Y Return</text>
+  <text x="996" y="342" font-size="12" fill="#059669" font-weight="500">+16.80%</text>
+  <text x="912" y="362" font-size="12" fill="#6B7280">Expense Ratio</text>
+  <text x="996" y="362" font-size="12" fill="#111827" font-weight="600">1.12%</text>
+  <text x="912" y="382" font-size="12" fill="#6B7280">Min Investment</text>
+  <text x="996" y="382" font-size="12" fill="#111827" font-weight="600">₹500</text>
+  <rect x="912" y="396" width="263" height="36" rx="8" fill="#4F46E5"/>
+  <text x="1044" y="419" font-size="12" fill="white" font-weight="600" text-anchor="middle">Invest Now</text>
+  <!-- Row 2 -->
+  <rect x="280" y="470" width="295" height="240" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="296" y="497" font-size="14" fill="#111827" font-weight="600">ICICI Pru Value</text>
+  <rect x="296" y="507" width="46" height="20" rx="6" fill="#EEF2FF"/>
+  <text x="304" y="522" font-size="10" fill="#4F46E5" font-weight="500">Value</text>
+  <rect x="350" y="507" width="68" height="20" rx="6" fill="#FEF3C7"/>
+  <text x="358" y="522" font-size="10" fill="#D97706" font-weight="600">MODERATE</text>
+  <line x1="296" y1="537" x2="559" y2="537" stroke="#F3F4F6" stroke-width="1"/>
+  <text x="296" y="557" font-size="12" fill="#6B7280">NAV</text>
+  <text x="380" y="557" font-size="12" fill="#111827" font-weight="600">₹89.45</text>
+  <text x="296" y="577" font-size="12" fill="#6B7280">1Y Return</text>
+  <text x="380" y="577" font-size="12" fill="#059669" font-weight="500">+18.90%</text>
+  <text x="296" y="597" font-size="12" fill="#6B7280">Expense</text>
+  <text x="380" y="597" font-size="12" fill="#111827" font-weight="600">1.35%</text>
+  <rect x="296" y="650" width="263" height="36" rx="8" fill="#4F46E5"/>
+  <text x="428" y="673" font-size="12" fill="white" font-weight="600" text-anchor="middle">Invest Now</text>
+  <rect x="588" y="470" width="295" height="240" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="604" y="497" font-size="14" fill="#111827" font-weight="600">Kotak Emerging Eq</text>
+  <rect x="604" y="507" width="52" height="20" rx="6" fill="#EEF2FF"/>
+  <text x="612" y="522" font-size="10" fill="#4F46E5" font-weight="500">Mid Cap</text>
+  <rect x="664" y="507" width="40" height="20" rx="6" fill="#FEE2E2"/>
+  <text x="670" y="522" font-size="10" fill="#DC2626" font-weight="600">HIGH</text>
+  <rect x="604" y="650" width="263" height="36" rx="8" fill="#4F46E5"/>
+  <text x="736" y="673" font-size="12" fill="white" font-weight="600" text-anchor="middle">Invest Now</text>
+  <rect x="896" y="470" width="295" height="240" rx="12" fill="white" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.08))"/>
+  <text x="912" y="497" font-size="14" fill="#111827" font-weight="600">Mirae Asset Large</text>
+  <rect x="912" y="507" width="66" height="20" rx="6" fill="#EEF2FF"/>
+  <text x="920" y="522" font-size="10" fill="#4F46E5" font-weight="500">Large Cap</text>
+  <rect x="986" y="507" width="38" height="20" rx="6" fill="#D1FAE5"/>
+  <text x="992" y="522" font-size="10" fill="#059669" font-weight="600">LOW</text>
+  <rect x="912" y="650" width="263" height="36" rx="8" fill="#4F46E5"/>
+  <text x="1044" y="673" font-size="12" fill="white" font-weight="600" text-anchor="middle">Invest Now</text>
+</svg>

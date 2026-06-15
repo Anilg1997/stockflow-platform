@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" font-family="'Inter', 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="loginBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EEF2FF"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FAF5FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="750" fill="url(#loginBg)"/>
+  <!-- Login Card -->
+  <rect x="390" y="80" width="420" height="590" rx="16" fill="white" filter="drop-shadow(0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.06))"/>
+  <rect x="560" y="100" width="64" height="64" rx="16" fill="#4F46E5" filter="drop-shadow(0 4px 6px rgba(79,70,229,0.25))"/>
+  <text x="568" y="140" font-size="28" fill="white" font-weight="700" text-anchor="middle">SF</text>
+  <text x="600" y="200" font-size="24" fill="#111827" font-weight="700" text-anchor="middle">Welcome back to StockFlow</text>
+  <text x="600" y="226" font-size="14" fill="#6B7280" text-anchor="middle">Sign in to your trading account</text>
+  <!-- Error -->
+  <rect x="420" y="248" width="360" height="40" rx="8" fill="#FEF2F2" stroke="#FECACA" stroke-width="1"/>
+  <text x="440" y="273" font-size="13" fill="#DC2626">Invalid email or password. Please try again.</text>
+  <!-- Form -->
+  <text x="420" y="318" font-size="13" fill="#374151" font-weight="500">Email</text>
+  <rect x="420" y="325" width="360" height="44" rx="10" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="440" y="352" font-size="14" fill="#9CA3AF">you@example.com</text>
+  <text x="420" y="390" font-size="13" fill="#374151" font-weight="500">Password</text>
+  <rect x="420" y="397" width="360" height="44" rx="10" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="440" y="424" font-size="14" fill="#9CA3AF">Enter your password</text>
+  <!-- Remember me -->
+  <rect x="420" y="456" width="14" height="14" rx="4" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="442" y="468" font-size="13" fill="#6B7280">Remember me</text>
+  <text x="675" y="468" font-size="13" fill="#4F46E5" font-weight="500">Forgot password?</text>
+  <!-- Submit -->
+  <rect x="420" y="486" width="360" height="46" rx="10" fill="#4F46E5"/>
+  <text x="600" y="515" font-size="14" fill="white" font-weight="600" text-anchor="middle">Sign In</text>
+  <!-- Register link -->
+  <text x="600" y="560" font-size="14" fill="#6B7280" text-anchor="middle">Don't have an account? <tspan fill="#4F46E5" font-weight="600">Create one</tspan></text>
+</svg>

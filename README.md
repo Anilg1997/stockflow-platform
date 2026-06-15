@@ -1,6 +1,36 @@
 # StockFlow Platform 📈
 
-**A Groww-like Stock Brokerage Platform** built with microservices architecture, providing real-time stock trading, portfolio management, mutual funds, IPOs, and market data analytics.
+[![Java](https://img.shields.io/badge/Java-21-orange)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3-brightgreen)](https://spring.io/projects/spring-boot)
+[![Angular](https://img.shields.io/badge/Angular-18-red)](https://angular.dev/)
+[![Kafka](https://img.shields.io/badge/Messaging-Apache%20Kafka-231F20)](https://kafka.apache.org/)
+[![PostgreSQL](https://img.shields.io/badge/DB-PostgreSQL-336791)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Cache-Redis-DC382D)](https://redis.io/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)](https://www.docker.com/)
+
+**A Groww-like Stock Brokerage Platform** built with 25+ Spring Boot microservices, providing real-time stock trading, portfolio management, mutual funds, IPOs, and market data analytics.
+
+---
+
+## 📸 Screenshots
+
+| Dashboard | Trading |
+|:---:|:---:|
+| ![Dashboard](screenshots/dashboard.svg) | ![Trading](screenshots/trading.svg) |
+
+| Portfolio | Watchlist |
+|:---:|:---:|
+| ![Portfolio](screenshots/portfolio.svg) | ![Watchlist](screenshots/watchlist.svg) |
+
+| Mutual Funds | IPOs |
+|:---:|:---:|
+| ![Mutual Funds](screenshots/mutual-funds.svg) | ![IPOs](screenshots/ipos.svg) |
+
+| Search | Login | Register |
+|:---:|:---:|:---:|
+| ![Search](screenshots/search.svg) | ![Login](screenshots/login.svg) | ![Register](screenshots/register.svg) |
+
+---
 
 ## Architecture Overview 🏗️
 
