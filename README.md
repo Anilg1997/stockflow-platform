@@ -30,6 +30,10 @@
 |:---:|:---:|:---:|
 | ![Search](screenshots/search.svg) | ![Login](screenshots/login.svg) | ![Register](screenshots/register.svg) |
 
+| AI Analytics |
+|:---:|
+| ![AI Analytics](screenshots/ai-analytics.svg) |
+
 ---
 
 ## Architecture Overview 🏗️
